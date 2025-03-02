@@ -8,7 +8,7 @@ import { AuthContext } from '../auth/AuthProvider';
 
 const SignupPage: React.FC = () => {
   const navigate = useNavigate();
-  const { setUser } = useContext(AuthContext) ?? {}; // ✅ Get setUser function from AuthContext
+  const auth = useContext(AuthContext); // ✅ Get setUser function from AuthContext
   
   const [formData, setFormData] = useState({
     firstName: '',
@@ -37,8 +37,9 @@ const SignupPage: React.FC = () => {
 
       // Store token and update auth state
       localStorage.setItem('token', data.token);
-      setUser({ email: formData.email }); // ✅ Mark user as logged in
-
+      if (auth?.setUser) {
+        auth.setUser({ email: formData.email });
+      }
       navigate('/questionnaire'); // ✅ Redirect after login
     } catch (error) {
       if (error instanceof Error) {
