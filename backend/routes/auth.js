@@ -77,4 +77,31 @@ router.post('/login', (req, res) => {
   });
 });
 
+// Get Name Route
+router.get('/name', (req, res) => {
+  console.log("Received request for /name route");
+  const { email } = req.query;
+
+  if (!email) {
+    console.log("Email is missing in the request");
+    return res.status(400).json({ error: 'Email is required' });
+  }
+
+  console.log(`Looking up user with email: ${email}`);
+  db.get('SELECT firstName, lastName FROM users WHERE email = ?', [email], (err, user) => {
+    if (err) {
+      console.error('Database error:', err);
+      return res.status(500).json({ error: 'Server error' });
+    }
+
+    if (!user) {
+      console.log("User not found");
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    console.log(`User found: ${user.firstName} ${user.lastName}`);
+    return res.status(200).json({ firstName: user.firstName, lastName: user.lastName });
+  });
+});
+
 module.exports = router;

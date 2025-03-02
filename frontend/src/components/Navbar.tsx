@@ -36,7 +36,7 @@ const Navbar: React.FC = () => {
 
           {auth?.user ? (
             <>
-              <span className="text-gray-700">{auth.user.email}</span>
+              <span className="text-gray-700">{auth.user.name}</span>
               <button 
                 onClick={handleLogout} 
                 className="px-4 py-2 rounded-full bg-xo-pink text-white hover:bg-xo-pink-light transition-colors"

@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { Heart, Mail, Lock, ArrowRight, Calendar } from 'lucide-react';
 import ScrapbookElement from '../components/ScrapbookElement';
 import { loginUser } from '../api/auth';
+import { getName } from '../api/name';
 import { AuthContext } from '../auth/AuthProvider'; // ✅ Import AuthContext
 
 const LoginPage: React.FC = () => {
@@ -42,7 +43,11 @@ const LoginPage: React.FC = () => {
       localStorage.setItem('token', data.token);
 
       if (auth?.setUser) {
-        auth.setUser({ email: formData.email }); // ✅ Mark user as logged in
+        console.log('✅ Fetching user data for:', formData.email);
+        const nameData = await getName(formData.email);
+        const name = `${nameData.firstName} ${nameData.lastName}`;
+
+        auth.setUser({ email: formData.email, name: name }); // ✅ Mark user as logged in
       } else {
         console.error("❌ setUser is undefined. Ensure AuthProvider is wrapping the app.");
       }

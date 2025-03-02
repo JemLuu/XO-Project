@@ -1,23 +1,40 @@
 import React, { createContext, useState, useEffect } from 'react';
 
 interface AuthContextType {
-  user: { email: string } | null;
-  setUser: (user: { email: string } | null) => void;
+  user: { email: string, name: string } | null;
+  setUser: (user: { email: string, name: string } | null) => void;
   logout: () => void;
 }
 
-export const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
+export { AuthContext };
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<{ email: string } | null>(null);
+  const [user, setUser] = useState<{ email: string, name: string } | null>(null);
 
   // Check for stored token on page load
   useEffect(() => {
     const token = localStorage.getItem('token');
+
     if (token) {
-      setUser({ email: 'user@example.com' }); // ✅ Simulated login (replace with actual user data)
+      // Replace with actual API call to fetch user data
+      fetch('/api/user', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        setUser({ email: data.email, name: data.name });
+      })
+      .catch(error => {
+        console.error('Error fetching user data:', error);
+        setUser(null);
+      });
     }
   }, []);
+
+  
 
   const logout = () => {
     localStorage.removeItem('token');
