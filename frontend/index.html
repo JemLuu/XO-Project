@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>XO Pitt</title>
+    <!-- This meta tag is to make it work on Safari, because Safari blocks stuff -->
+    <!-- Explaination: 
+      style-src 'self' 'unsafe-inline' https://fonts.googleapis.com → Allows styles from your own site + Google Fonts.
+	    font-src 'self' https://fonts.gstatic.com → Allows fonts to be loaded from Google.
+	    script-src 'self' 'unsafe-inline' 'unsafe-eval' http://www.google.com → Allows inline scripts and Google scripts. -->
+    <meta http-equiv="Content-Security-Policy" content="
+  default-src *;
+  style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+  font-src 'self' https://fonts.gstatic.com;
+  script-src 'self' 'unsafe-inline' 'unsafe-eval' http://www.google.com;"> 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
