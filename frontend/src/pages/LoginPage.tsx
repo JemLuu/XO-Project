@@ -1,19 +1,24 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Heart, Mail, Lock, ArrowRight, Calendar } from 'lucide-react';
 import ScrapbookElement from '../components/ScrapbookElement';
 import { loginUser } from '../api/auth';
-
+import { AuthContext } from '../auth/AuthProvider'; // ✅ Import AuthContext
 
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
+  const auth = useContext(AuthContext); // ✅ Get auth state
+  if (!auth) {
+    console.error("❌ AuthContext is undefined. Ensure AuthProvider wraps the app.");
+  }
+
   const [formData, setFormData] = useState({
     email: '',
     password: '',
     rememberMe: false,
   });
-  
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
     setFormData(prev => ({
@@ -21,19 +26,33 @@ const LoginPage: React.FC = () => {
       [name]: type === 'checkbox' ? checked : value,
     }));
   };
-  
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       const data = await loginUser(formData.email, formData.password);
-      console.log('Login successful:', data);
+      console.log('✅ Login successful:', data);
+
+      if (!data || !data.token) {
+        alert('Login failed: No token received.');
+        return;
+      }
+
+      // Store token and update auth state
       localStorage.setItem('token', data.token);
-      navigate('/Questionnaire'); // Redirect after successful login
+
+      if (auth?.setUser) {
+        auth.setUser({ email: formData.email }); // ✅ Mark user as logged in
+      } else {
+        console.error("❌ setUser is undefined. Ensure AuthProvider is wrapping the app.");
+      }
+
+      navigate('/questionnaire'); // ✅ Redirect after login
     } catch (error) {
       alert('Invalid credentials');
     }
   };
-  
+
   return (
     <div className="container mx-auto px-4 py-12">
       <div className="max-w-md mx-auto">
@@ -50,7 +69,7 @@ const LoginPage: React.FC = () => {
           <h1 className="text-4xl font-handwritten text-xo-pink mb-2">Welcome Back</h1>
           <p className="text-gray-600">Log in to see your match</p>
         </motion.div>
-        
+
         <ScrapbookElement color="white" hasTape={true} className="mb-8">
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
@@ -71,7 +90,7 @@ const LoginPage: React.FC = () => {
                 />
               </div>
             </div>
-            
+
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">Password</label>
               <div className="relative">
@@ -90,7 +109,7 @@ const LoginPage: React.FC = () => {
                 />
               </div>
             </div>
-            
+
             <div className="flex items-center justify-between">
               <div className="flex items-center">
                 <input
@@ -105,12 +124,12 @@ const LoginPage: React.FC = () => {
                   Remember me
                 </label>
               </div>
-              
+
               <a href="#" className="text-sm text-xo-pink hover:underline">
                 Forgot password?
               </a>
             </div>
-            
+
             <div className="pt-4">
               <button
                 type="submit"
@@ -121,7 +140,7 @@ const LoginPage: React.FC = () => {
             </div>
           </form>
         </ScrapbookElement>
-        
+
         <div className="text-center">
           <p className="text-gray-600">
             Don't have a profile yet?{' '}
