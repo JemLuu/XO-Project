@@ -11,6 +11,8 @@ const Navbar: React.FC = () => {
     auth?.logout(); // ✅ Logout user
   };
 
+  console.log(auth?.user);
+
   return (
     <nav className="bg-white shadow-md py-4 px-6 relative z-10">
       <div className="container mx-auto flex justify-between items-center">
